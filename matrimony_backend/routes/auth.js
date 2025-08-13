@@ -3,7 +3,8 @@ const authRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../model/user');
-
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 authRouter.post('/api/sign-up',async(req,res)=>{
     try {
         const {fullname,email,password} = req.body;
@@ -53,8 +54,6 @@ authRouter.post('/api/sign-in',async(req,res)=>{
     }
 });
 
-
-// OTP route
 
 
 
