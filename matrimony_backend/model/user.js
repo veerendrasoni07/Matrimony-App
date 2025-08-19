@@ -9,21 +9,17 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:false
     },
-    pob:{
-        type:String,
-        required:false
+    age:{
+        type:Number
     },
     height:{
         type:String,
-        required:false
     },
     weight:{
         type:String,
-        required:false
     },
     marital_status:{
         type:String,
-        enum:['Single','Widowed','Divorced']
     },
     state:{
         type:String,
@@ -48,30 +44,24 @@ const userSchema = new mongoose.Schema({
     },
     gender:{
         type:String,
-        enum:['Male','Female','Others']
     },
     education:{
         type:String
     },
-    occupation:{
+    work:{
         type:String
     },
-    worksWith:{
-        type:String
-    },
-    workAS:{
+    workRole:{
         type:String
     },
     annual_income:{
-        type:Number
+        type:String
     },
     diet:{
         type:String,
-        enum: ['Veg','Non-Veg']
     },
     family_type:{
         type:String,
-        enum:['Joint','Nuclear']
     },
     image:{
         type:String,

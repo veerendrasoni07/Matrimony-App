@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 authRouter.post('/api/sign-up',async(req,res)=>{
     try {
-        const {fullname,email,password} = req.body;
+        const {fullname,email,password,gender} = req.body;
         if(!fullname || !email || !password){
             return res.status(400).json({msg:"Name or Email Or Password is missing!"});
         }
@@ -20,6 +20,7 @@ authRouter.post('/api/sign-up',async(req,res)=>{
             {
                 fullname,
                 email,
+                gender,
                 password:hashedPassword
             }
         );
@@ -54,6 +55,16 @@ authRouter.post('/api/sign-in',async(req,res)=>{
     }
 });
 
+authRouter.put('/api/update-profile',async(req,res)=>{
+    try {
+        const data = req.body;
+        const updateProfile = await User.findByIdAndUpdate(data._id,data,{new:true});
+        res.status(200).json(updateProfile);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+});
 
 
 
