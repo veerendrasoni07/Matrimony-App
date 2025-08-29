@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { type } = require('os');
 
 const userSchema = new mongoose.Schema({
     fullname:{
@@ -84,9 +85,8 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    rejectedUser:{
-        
-    }
+    sentRequest:[{to:mongoose.Schema.Types.ObjectId,status:String}],
+    requests:[{from:mongoose.Schema.Types.ObjectId,status:String}]
 });
 
 const User = mongoose.model('User',userSchema);

@@ -27,27 +27,67 @@ partnerRoute.post('/api/reject',async(req,res)=>{
     }
 })
 
-
-
+partnerRoute.post('/api/accept',async(req,res)=>{
+    try {
+        const {userId,targetId} = req.body;
+        await Interaction.findOneAndUpdate(
+            {
+                fromUser:userId,
+                toUser:targetId
+            },
+            {
+                status:'accepted'
+            },
+            {
+                new:true
+            }
+        )
+        res.status(200).json({msg:"Request is accepted"})
+    } catch (error) {
+        res.status(500).json({error:"Internal Server Error"})
+        console.log(error)
+    }
+})
 
 
 partnerRoute.get('/api/suggestion/:userId',async(req,res)=>{
     try {
         const {userId} = req.params;
-        const exist = await User.findById(userId);
-        if(!exist){
-            return res.status(400).json({msg:"User not found"});
-        }
-        const suggestions = await User.find(
-            {
-                gender:{$ne:exist.gender},
-            }
-        );
+        // get all users this user already interacted with
+        const interacted = await Interaction.find({fromUser:userId}).select('toUser')
+        const interactedIds = interacted.map(i=> i.toUser) // it contains list of ids which we already interacted with
+        // now fetch suggestion
+        const suggestions = await User.find({
+            _id: {$nin:[...interactedIds,userId]} // excluding all the users which we already interacted with and itself also
+        })
         res.status(200).json(suggestions);
     } catch (error) {
         console.log(error);
         res.status(500).json({error:"Internal Server Error"});
     }
 });
+
+
+
+partnerRoute.post('/api/send-request',async(req,res)=>{
+    try {
+        const {senderId,receiverId} = req.body;
+        if(senderId === receiverId) return res.status(400).json({msg:"You cannot send request to yourself"})
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId)
+        if(!sender || !receiver) return res.status(400).json({msg:"User doesn't exist"});
+        const alreadyRequested = await sender.sentRequest.map(
+            (req)=> req.to.toString() === receiverId
+        )
+        if(alreadyRequested) return res.status(400).json({msg:"Request Already Sent!"});
+        sender.sentRequest.push({to:receiverId,status:'pending'})
+        receiver.requests.push({from:senderId,status:'pending'})
+        res.status(200).json({msg:"Request is sent"})
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"})
+    }
+})
 
 module.exports = partnerRoute;
