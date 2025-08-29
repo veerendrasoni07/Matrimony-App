@@ -13,6 +13,11 @@ app.use(authRouter);
 app.use(otpRouter);
 app.use(profilePicRouter);
 
+app.get('/',(req,res)=>{
+    res.send("Hello from backend");
+})
+
+
 app.listen(port,()=>{
     console.log("Server is connected");
 })

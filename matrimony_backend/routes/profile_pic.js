@@ -20,8 +20,12 @@ profilePicRouter.put('/api/upload-profile-pic/:userId',async(req,res)=>{
 
         // delete old pic if exist 
         if(userExist.image){
-            const oldImagePublicId = userExist.image.split('/').pop().split('.')[0];
-            cloudinary.uploader.destroy(oldImagePublicId);
+            const oldImage = userExist.image;
+            const parts = oldImage.split('/');
+            const fileNameWithExt = parts.pop();
+            const folder = parts.slice(parts.indexOf("profilePic")).join('/');
+            const publicId = `${folder}/${fileNameWithExt.split('.')[0]}`;
+            await cloudinary.uploader.destroy(publicId); 
         }
 
         // upload new pic
@@ -32,12 +36,14 @@ profilePicRouter.put('/api/upload-profile-pic/:userId',async(req,res)=>{
             },
             {new:true}
         );
-        res.status(200).json(updated.image);
+        res.status(200).json({image:updated.image});
 
     } catch (error) {
         console.log(error);
         res.status(500).json({error:"Internal Server Error"});
     }
+
 });
 
 module.exports = profilePicRouter;
+    
