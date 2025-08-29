@@ -76,7 +76,7 @@ partnerRoute.post('/api/send-request',async(req,res)=>{
         const sender = await User.findById(senderId);
         const receiver = await User.findById(receiverId)
         if(!sender || !receiver) return res.status(400).json({msg:"User doesn't exist"});
-        const alreadyRequested = await sender.sentRequest.map(
+        const alreadyRequested = await sender.sentRequest.find(
             (req)=> req.to.toString() === receiverId
         )
         if(alreadyRequested) return res.status(400).json({msg:"Request Already Sent!"});
@@ -88,6 +88,41 @@ partnerRoute.post('/api/send-request',async(req,res)=>{
         console.log(error);
         res.status(500).json({error:"Internal Server Error"})
     }
+});
+
+
+partnerRoute.post ('/api/accept-request',async(req,res)=>{
+    try {
+        const {senderId,receiverId} = req.body;
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId);
+        if(!sender) return res.status(400).json({msg:"Sender not found"});
+        if(!receiver) return res.status(400).json({msg:"Receiver not found"});
+        const alreadyAccepted = receiver.requests.some(
+            (req)=> req.from.toString() === senderId
+        )
+        
+        // remove the request from the receiver's request list
+        receiver.requests = receiver.requests.filter(
+            (req) => req.from.toString() !== senderId
+        )
+
+        // remove the sent request from the sender's sent request list
+        sender.sentRequest = sender.sentRequest.filter(
+            (req) => req.to.toString() !== receiver
+        )
+
+        // add each other to connections
+        sender.connections.push({friend:receiverId})
+        receiver.connections.push({friend:senderId})
+
+        res.status(200).json({msg:`${receiver.fullname} accepted your request`})
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"})
+    }
 })
+
 
 module.exports = partnerRoute;

@@ -86,7 +86,8 @@ const userSchema = new mongoose.Schema({
         required:true
     },
     sentRequest:[{to:mongoose.Schema.Types.ObjectId,status:String}],
-    requests:[{from:mongoose.Schema.Types.ObjectId,status:String}]
+    requests:[{from:mongoose.Schema.Types.ObjectId,status:String}],
+    connections : [{friend:mongoose.Schema.Types.ObjectId}]
 });
 
 const User = mongoose.model('User',userSchema);
