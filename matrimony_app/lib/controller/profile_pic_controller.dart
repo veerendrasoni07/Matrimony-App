@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimony_app/global_variable.dart';
 import 'package:matrimony_app/provider/user_provider.dart';
-import 'package:matrimony_app/service/managa_http_request.dart';
+import 'package:matrimony_app/service/manage_http_request.dart';
 class ProfilePicController{
 
 

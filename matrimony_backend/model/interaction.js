@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { type } = require('os')
 
 const interactionSchema = new mongoose.Schema({
     fromUser :{
@@ -16,7 +15,7 @@ const interactionSchema = new mongoose.Schema({
         type:String,
         enum:['pending','rejected','accepted'],
         default:'pending',
-    }
+    },
 },{timestamps:true})
 
 const Interaction = mongoose.model("Interaction",interactionSchema)
